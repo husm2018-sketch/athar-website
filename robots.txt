@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://husm2018-sketch.github.io/athar-website/sitemap.xml

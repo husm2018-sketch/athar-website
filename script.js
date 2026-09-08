@@ -1,167 +1,151 @@
-/* ============================================================
-   Athar — أثر  |  site interactions
-   - language toggle (ar/en) + dir, persisted
-   - sticky nav, mobile menu
-   - scroll reveal (IntersectionObserver)
-   - count-up stats, TOC scrollspy
-   ============================================================ */
-(function () {
+(() => {
   "use strict";
 
-  const html = document.documentElement;
-  const STORE_KEY = "athar-lang";
+  const SUPPORT_EMAIL = "athar.dev.app@gmail.com";
 
-  /* ---------- language ---------- */
-  function applyLang(lang) {
-    const isAr = lang === "ar";
-    html.setAttribute("data-lang", lang);
-    html.setAttribute("lang", lang);
-    html.setAttribute("dir", isAr ? "rtl" : "ltr");
-    document.title = isAr
-      ? html.dataset.titleAr || document.title
-      : html.dataset.titleEn || document.title;
-    document.querySelectorAll("[data-lang-toggle]").forEach((b) => {
-      b.textContent = isAr ? "EN" : "ع";
-      b.setAttribute("aria-label", isAr ? "Switch to English" : "التبديل إلى العربية");
-    });
-    try { localStorage.setItem(STORE_KEY, lang); } catch (e) {}
-  }
+  document.documentElement.classList.add("js");
 
-  function initLang() {
-    let lang = "ar";
-    try {
-      const saved = localStorage.getItem(STORE_KEY);
-      if (saved === "ar" || saved === "en") lang = saved;
-    } catch (e) {}
-    applyLang(lang);
-    document.querySelectorAll("[data-lang-toggle]").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        applyLang(html.getAttribute("data-lang") === "ar" ? "en" : "ar");
-      });
-    });
-  }
-
-  /* ---------- sticky nav ---------- */
-  function initNav() {
-    const nav = document.querySelector(".nav");
-    if (nav) {
-      const onScroll = () => nav.classList.toggle("scrolled", window.scrollY > 12);
-      onScroll();
-      window.addEventListener("scroll", onScroll, { passive: true });
-    }
-    const burger = document.querySelector(".nav-burger");
-    const links = document.querySelector(".nav-links");
-    if (burger && links) {
-      burger.addEventListener("click", () => {
-        const open = links.classList.toggle("mobile-open");
-        burger.classList.toggle("open", open);
-      });
-      links.querySelectorAll("a").forEach((a) =>
-        a.addEventListener("click", () => {
-          links.classList.remove("mobile-open");
-          burger.classList.remove("open");
-        })
-      );
-    }
-  }
-
-  /* ---------- scroll reveal ---------- */
-  function initReveal() {
-    const els = document.querySelectorAll(".reveal");
-    if (!("IntersectionObserver" in window) || !els.length) {
-      els.forEach((e) => e.classList.add("in"));
-      return;
-    }
-    const io = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((en) => {
-          if (en.isIntersecting) {
-            en.target.classList.add("in");
-            io.unobserve(en.target);
-          }
-        });
-      },
-      { threshold: 0.12, rootMargin: "0px 0px -8% 0px" }
-    );
-    els.forEach((e) => io.observe(e));
-  }
-
-  /* ---------- count up ---------- */
-  function initCount() {
-    const nums = document.querySelectorAll("[data-count]");
-    if (!nums.length) return;
-    const run = (el) => {
-      const target = parseFloat(el.dataset.count);
-      const suffix = el.dataset.suffix || "";
-      const dur = 1400;
-      const start = performance.now();
-      const step = (now) => {
-        const p = Math.min((now - start) / dur, 1);
-        const eased = 1 - Math.pow(1 - p, 3);
-        const val = target * eased;
-        el.textContent =
-          (target % 1 === 0 ? Math.round(val) : val.toFixed(1)) + suffix;
-        if (p < 1) requestAnimationFrame(step);
-      };
-      requestAnimationFrame(step);
-    };
-    if (!("IntersectionObserver" in window)) {
-      nums.forEach(run);
-      return;
-    }
-    const io = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((en) => {
-          if (en.isIntersecting) {
-            run(en.target);
-            io.unobserve(en.target);
-          }
-        });
-      },
-      { threshold: 0.6 }
-    );
-    nums.forEach((n) => io.observe(n));
-  }
-
-  /* ---------- TOC scrollspy ---------- */
-  function initToc() {
-    const links = document.querySelectorAll(".toc a");
-    if (!links.length) return;
-    const map = new Map();
-    links.forEach((l) => {
-      const id = l.getAttribute("href").slice(1);
-      const sec = document.getElementById(id);
-      if (sec) map.set(sec, l);
-    });
-    if (!map.size) return;
-    const io = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((en) => {
-          if (en.isIntersecting) {
-            links.forEach((l) => l.classList.remove("active"));
-            const a = map.get(en.target);
-            if (a) a.classList.add("active");
-          }
-        });
-      },
-      { rootMargin: "-20% 0px -70% 0px" }
-    );
-    map.forEach((_, sec) => io.observe(sec));
-  }
-
-  /* ---------- footer year ---------- */
-  function initYear() {
-    document.querySelectorAll("[data-year]").forEach((e) => {
-      e.textContent = new Date().getFullYear();
-    });
-  }
-
-  document.addEventListener("DOMContentLoaded", () => {
-    initLang();
-    initNav();
-    initReveal();
-    initCount();
-    initToc();
-    initYear();
+  document.querySelectorAll("[data-current-year]").forEach((element) => {
+    element.textContent = String(new Date().getFullYear());
   });
+
+  document.querySelectorAll("[data-support-email]").forEach((element) => {
+    element.textContent = SUPPORT_EMAIL;
+    if (element instanceof HTMLAnchorElement) {
+      element.href = `mailto:${SUPPORT_EMAIL}`;
+    }
+  });
+
+  document.querySelectorAll("[data-support-subject]").forEach((element) => {
+    if (!(element instanceof HTMLAnchorElement)) return;
+    const subject = element.dataset.supportSubject || "دعم تطبيق أثر";
+    element.href = `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent(subject)}`;
+  });
+
+  const menuButton = document.querySelector("[data-menu-button]");
+  const siteNav = document.querySelector("[data-site-nav]");
+
+  const isMenuOpen = () =>
+    menuButton?.getAttribute("aria-expanded") === "true";
+
+  const closeMenu = ({ returnFocus = false } = {}) => {
+    if (!menuButton || !siteNav) return;
+    menuButton.setAttribute("aria-expanded", "false");
+    menuButton.setAttribute("aria-label", "فتح قائمة التنقل");
+    siteNav.dataset.open = "false";
+    document.body.classList.remove("menu-open");
+    if (returnFocus) menuButton.focus();
+  };
+
+  if (menuButton && siteNav) {
+    const navLinks = Array.from(siteNav.querySelectorAll("a[href]"));
+
+    menuButton.addEventListener("click", () => {
+      const shouldOpen = !isMenuOpen();
+      menuButton.setAttribute("aria-expanded", String(shouldOpen));
+      menuButton.setAttribute(
+        "aria-label",
+        shouldOpen ? "إغلاق قائمة التنقل" : "فتح قائمة التنقل"
+      );
+      siteNav.dataset.open = String(shouldOpen);
+      document.body.classList.toggle("menu-open", shouldOpen);
+      if (shouldOpen) {
+        window.requestAnimationFrame(() => navLinks[0]?.focus());
+      }
+    });
+
+    navLinks.forEach((link) => {
+      link.addEventListener("click", closeMenu);
+    });
+
+    window.addEventListener("resize", () => {
+      if (window.matchMedia("(min-width: 981px)").matches) closeMenu();
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (!isMenuOpen()) return;
+
+      if (event.key === "Escape") {
+        event.preventDefault();
+        closeMenu({ returnFocus: true });
+        return;
+      }
+
+      if (event.key === "Tab" && navLinks.length > 0) {
+        const focusCycle = [menuButton, ...navLinks];
+        const currentIndex = focusCycle.indexOf(document.activeElement);
+        const direction = event.shiftKey ? -1 : 1;
+        const nextIndex =
+          currentIndex === -1
+            ? 1
+            : (currentIndex + direction + focusCycle.length) % focusCycle.length;
+
+        event.preventDefault();
+        focusCycle[nextIndex].focus();
+      }
+    });
+  }
+
+  const deletionForm = document.querySelector("[data-delete-form]");
+  const reasonInput = document.querySelector("[data-delete-reason]");
+  const reasonCounter = document.querySelector("[data-reason-counter]");
+  const formStatus = document.querySelector("[data-form-status]");
+  const repeatEmailLink = document.querySelector("[data-repeat-email]");
+
+  const updateReasonCounter = () => {
+    if (!reasonInput || !reasonCounter) return;
+    reasonCounter.textContent = `${reasonInput.value.length}/500`;
+  };
+
+  const buildDeletionMailto = () => {
+    if (!(deletionForm instanceof HTMLFormElement)) return "";
+
+    const emailField = deletionForm.elements.namedItem("account-email");
+    const reasonField = deletionForm.elements.namedItem("deletion-reason");
+    const accountEmail =
+      emailField instanceof HTMLInputElement ? emailField.value.trim() : "";
+    const reason =
+      reasonField instanceof HTMLTextAreaElement ? reasonField.value.trim() : "";
+
+    const subject = "طلب حذف حساب أثر";
+    const body = [
+      "مرحبًا فريق أثر،",
+      "",
+      "أرغب في بدء طلب حذف حسابي وبياناتي.",
+      `البريد المرتبط بالحساب: ${accountEmail}`,
+      `السبب (اختياري): ${reason || "لم يُذكر"}`,
+      "",
+      "أفهم أن تنفيذ الطلب يتطلب التحقق من ملكية الحساب، وأن حذف حساب أثر لا يلغي اشتراك متجر التطبيقات تلقائيًا.",
+      "",
+      "شكرًا.",
+    ].join("\n");
+
+    return `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent(
+      subject
+    )}&body=${encodeURIComponent(body)}`;
+  };
+
+  if (reasonInput) {
+    reasonInput.addEventListener("input", updateReasonCounter);
+    updateReasonCounter();
+  }
+
+  if (deletionForm instanceof HTMLFormElement) {
+    deletionForm.action = `mailto:${SUPPORT_EMAIL}`;
+    deletionForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      if (!deletionForm.reportValidity()) return;
+
+      const mailto = buildDeletionMailto();
+      if (!mailto) return;
+
+      deletionForm.dataset.prepared = "true";
+      if (formStatus) formStatus.hidden = false;
+      if (repeatEmailLink instanceof HTMLAnchorElement) {
+        repeatEmailLink.href = mailto;
+      }
+
+      window.location.href = mailto;
+    });
+  }
 })();
