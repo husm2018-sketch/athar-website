@@ -6,6 +6,10 @@ let inviteToken = params.get('invite') ?? '';
 let accessToken = '';
 let busy = false;
 const el = id => document.getElementById(id);
+if (settings.appleWebEnabled !== true) {
+  el('apple').hidden = true;
+  el('appleUnavailable').hidden = false;
+}
 const labels = {
   nutrition: 'التغذية والوجبات وأهدافها',
   training: 'خطط التمارين والجلسات والمجموعات',
