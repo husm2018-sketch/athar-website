@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; connect-src https://psnrmdigskrojgyxuzat.supabase.co; base-uri 'none'; form-action 'none'; object-src 'none'">
+  <title>مشاركة المتابعة · أثر</title>
+  <link rel="stylesheet" href="./styles.css">
+  <script src="./config.js" defer></script>
+  <script src="./sharing.js" defer></script>
+</head>
+<body><main>
+  <h1>مشاركة المتابعة في أثر</h1>
+  <p id="intro">جاري تحميل الدعوة…</p>
+  <p class="notice">هذه متابعة للقراءة. تبقى خطتك وأهدافك وسجلاتك كما هي، ولا تحتاج تحديث تطبيق أثر. يمكنك إيقاف المشاركة من هذه الصفحة.</p>
+  <section id="auth" hidden>
+    <h2>حساب أثر الحالي</h2>
+    <p>استخدم نفس طريقة الدخول ونفس الحساب الذي تستخدمه في تطبيق أثر.</p>
+    <button id="google">المتابعة باستخدام Google</button>
+    <button id="apple">المتابعة باستخدام Apple</button>
+    <small>تسجيل الدخول وحده لا يشارك سجلاتك. تختار البيانات وتوافق عليها في الخطوة التالية.</small>
+  </section>
+  <section id="sharing" hidden>
+    <h2>البيانات التي تختار مشاركتها</h2>
+    <p id="signedIn"></p><button id="signout">استخدام حساب آخر</button>
+    <p>الاسم والصورة ومعلومات الملف الأساسية، مثل الهدف والعمر والطول وبداية اليوم، تظهر للمدرب عند قبول الدعوة. باقي الأقسام تبدأ مغلقة. تتيح المشاركة رؤية سجل القسم المحدد، بما فيه البيانات السابقة، إلى أن توقفها.</p>
+    <div id="options"></div>
+    <small>مشاركة التغذية تشمل الوزن الحالي المستخدم لحساب أهدافها. سجل الأوزان والقياسات يتبع خيار التطور.</small>
+    <button id="accept">الموافقة على المشاركة المحددة</button>
+    <button id="stop" hidden>إيقاف المشاركة</button>
+  </section>
+  <p id="status" role="status" aria-live="polite"></p>
+  <p><a id="manage">إدارة المشاركة لاحقًا</a></p>
+  <p><a href="../privacy-policy/">سياسة الخصوصية</a></p>
+</main></body></html>
